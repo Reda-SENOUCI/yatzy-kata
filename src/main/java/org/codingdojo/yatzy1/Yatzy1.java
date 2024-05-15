@@ -4,12 +4,11 @@ import org.codingdojo.Dice;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Yatzy1 {
 
-    private List<Dice> dices; //
+    private List<Dice> dices;
 
     private Yatzy1(int d1, int d2, int d3, int d4, int d5) {
         // Make the list immutable
@@ -21,52 +20,33 @@ public class Yatzy1 {
             new Dice(d5));
     }
 
-    public static Yatzy1 Create(int d1, int d2, int d3, int d4, int d5) {
+    public static Yatzy1 create(int d1, int d2, int d3, int d4, int d5) {
         return new Yatzy1(d1, d2, d3, d4, d5);
     }
 
 
     public int calculateOnes() {
-        return this.dices.stream()
-            .filter(Dice::isOne)
-            .mapToInt(Dice::getValue)
-            .sum();
+        return calculateSide(1);
     }
 
     public int calculateTwos() {
-        return this.dices.stream()
-            .filter(Dice::isTwo)
-            .mapToInt(Dice::getValue)
-            .sum();
-
+        return calculateSide(2);
     }
 
     public int calculateThrees() {
-        return this.dices.stream()
-            .filter(Dice::isThree)
-            .mapToInt(Dice::getValue)
-            .sum();
+        return calculateSide(3);
     }
 
     public int calculateFours() {
-        return this.dices.stream()
-            .filter(Dice::isFour)
-            .mapToInt(Dice::getValue)
-            .sum();
+        return calculateSide(4);
     }
 
     public int calculateFives() {
-        return this.dices.stream()
-            .filter(Dice::isFive)
-            .mapToInt(Dice::getValue)
-            .sum();
+        return calculateSide(5);
     }
 
     public int calculateSixes() {
-        return this.dices.stream()
-            .filter(Dice::isSix)
-            .mapToInt(Dice::getValue)
-            .sum();
+        return calculateSide(6);
     }
 
     public int calculatePairs() {
@@ -148,6 +128,12 @@ public class Yatzy1 {
         return valueCounts;
     }
 
+    private int calculateSide(int side) {
+        return this.dices.stream()
+            .filter(dice -> dice.getValue() == side)
+            .mapToInt(Dice::getValue)
+            .sum();
+    }
 }
 
 
