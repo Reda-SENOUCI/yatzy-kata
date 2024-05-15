@@ -49,7 +49,6 @@ public class Yatzy1Test {
         assertEquals(0, Yatzy1.create(1, 3, 2, 5, 5).calculateFours());
     }
 
-
     @Test
     public void should_score_fives() {
         assertEquals(10, Yatzy1.create(4, 4, 4, 5, 5).calculateFives());
