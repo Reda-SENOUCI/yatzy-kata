@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class Yatzy1 {
 
-    private List<Dice> dices;
+    private final List<Dice> dices;
 
     private Yatzy1(int d1, int d2, int d3, int d4, int d5) {
         // Make the list immutable
@@ -96,14 +96,16 @@ public class Yatzy1 {
 
 
     public int calculateSmallStraight() {
-        var sortedDices = this.dices.stream().map(Dice::getValue).sorted().toList();
-        return List.of(1, 2, 3, 4, 5).equals(sortedDices) ? 15 : 0;
+        return List.of(1, 2, 3, 4, 5).equals(getSortedDices()) ? 15 : 0;
     }
 
 
     public int calculateLargeStraight() {
-        var sortedDices = this.dices.stream().map(Dice::getValue).sorted().toList();
-        return List.of(2, 3, 4, 5, 6).equals(sortedDices) ? 20 : 0;
+        return List.of(2, 3, 4, 5, 6).equals(getSortedDices()) ? 20 : 0;
+    }
+
+    private List<Integer> getSortedDices() {
+        return this.dices.stream().map(Dice::getValue).sorted().toList();
     }
 
     public int calculateFullHouse() {
@@ -118,14 +120,12 @@ public class Yatzy1 {
     }
 
     public int calculateYatzy() {
-        Map<Integer, Long> valueCounts = countDiceGroups();
-        return valueCounts.size() == 1 ? 50 : 0;
+        return countDiceGroups().size() == 1 ? 50 : 0;
     }
 
     private Map<Integer, Long> countDiceGroups() {
-        Map<Integer, Long> valueCounts = this.dices.stream()
+        return this.dices.stream()
             .collect(Collectors.groupingBy(Dice::getValue, Collectors.counting()));
-        return valueCounts;
     }
 
     private int calculateSide(int side) {
