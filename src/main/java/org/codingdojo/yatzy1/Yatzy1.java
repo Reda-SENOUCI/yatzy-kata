@@ -5,51 +5,49 @@ import org.codingdojo.Dice;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.Objects.requireNonNull;
 
 public class Yatzy1 {
 
-    private final List<Dice> dices;
+    private final List<Dice> roll;
 
-    private Yatzy1(int d1, int d2, int d3, int d4, int d5) {
-        // Make the list immutable
-        this.dices = List.of(
-            new Dice(d1),
-            new Dice(d2),
-            new Dice(d3),
-            new Dice(d4),
-            new Dice(d5));
+    private Yatzy1(List<Dice> roll) {
+        this.roll = requireNonNull(roll);
     }
 
-    public static Yatzy1 create(int d1, int d2, int d3, int d4, int d5) {
-        return new Yatzy1(d1, d2, d3, d4, d5);
+    public static Yatzy1 roll(int d1, int d2, int d3, int d4, int d5) {
+        return new Yatzy1(IntStream.of(d1, d2, d3, d4, d5).mapToObj(Dice::new).toList());
+
     }
 
 
-    public int calculateOnes() {
-        return calculateSide(1);
+    public int scoreOnes() {
+        return sumOfDiceWithValue(1);
     }
 
-    public int calculateTwos() {
-        return calculateSide(2);
+    public int scoreTwos() {
+        return sumOfDiceWithValue(2);
     }
 
-    public int calculateThrees() {
-        return calculateSide(3);
+    public int scoreThrees() {
+        return sumOfDiceWithValue(3);
     }
 
-    public int calculateFours() {
-        return calculateSide(4);
+    public int scoreFours() {
+        return sumOfDiceWithValue(4);
     }
 
-    public int calculateFives() {
-        return calculateSide(5);
+    public int scoreFives() {
+        return sumOfDiceWithValue(5);
     }
 
-    public int calculateSixes() {
-        return calculateSide(6);
+    public int scoreSixes() {
+        return sumOfDiceWithValue(6);
     }
 
-    public int calculatePairs() {
+    public int scorePairs() {
         Map<Integer, Long> valueCounts = countDiceGroups();
 
         return valueCounts.entrySet().stream()
@@ -60,7 +58,7 @@ public class Yatzy1 {
     }
 
 
-    public int calculateTwoPairs() {
+    public int scoreTwoPairs() {
         Map<Integer, Long> valueCounts = countDiceGroups();
 
         var groups = valueCounts.entrySet().stream()
@@ -75,7 +73,7 @@ public class Yatzy1 {
         return 0;
     }
 
-    public int calculateThreeKinds() {
+    public int scoreThreeKinds() {
         Map<Integer, Long> valueCounts = countDiceGroups();
 
         return valueCounts.entrySet().stream()
@@ -85,7 +83,7 @@ public class Yatzy1 {
     }
 
 
-    public int calculateFourKinds() {
+    public int scoreFourKinds() {
         Map<Integer, Long> valueCounts = countDiceGroups();
 
         return valueCounts.entrySet().stream()
@@ -95,41 +93,41 @@ public class Yatzy1 {
     }
 
 
-    public int calculateSmallStraight() {
+    public int scoreSmallStraight() {
         return List.of(1, 2, 3, 4, 5).equals(getSortedDices()) ? 15 : 0;
     }
 
 
-    public int calculateLargeStraight() {
+    public int scoreLargeStraight() {
         return List.of(2, 3, 4, 5, 6).equals(getSortedDices()) ? 20 : 0;
     }
 
-    private List<Integer> getSortedDices() {
-        return this.dices.stream().map(Dice::getValue).sorted().toList();
-    }
-
-    public int calculateFullHouse() {
-        var threeKinds = this.calculateThreeKinds();
-        var pair = this.calculatePairs();
+    public int scoreFullHouse() {
+        var threeKinds = this.scoreThreeKinds();
+        var pair = this.scorePairs();
         return threeKinds > 0 && pair > 0 ? threeKinds + pair : 0;
 
     }
 
-    public int calculateChance() {
-        return this.dices.stream().mapToInt(Dice::getValue).sum();
+    public int scoreChance() {
+        return this.roll.stream().mapToInt(Dice::getValue).sum();
     }
 
-    public int calculateYatzy() {
+    public int scoreYatzy() {
         return countDiceGroups().size() == 1 ? 50 : 0;
     }
 
+    private List<Integer> getSortedDices() {
+        return this.roll.stream().map(Dice::getValue).sorted().toList();
+    }
+
     private Map<Integer, Long> countDiceGroups() {
-        return this.dices.stream()
+        return this.roll.stream()
             .collect(Collectors.groupingBy(Dice::getValue, Collectors.counting()));
     }
 
-    private int calculateSide(int side) {
-        return this.dices.stream()
+    private int sumOfDiceWithValue(int side) {
+        return this.roll.stream()
             .filter(dice -> dice.getValue() == side)
             .mapToInt(Dice::getValue)
             .sum();
